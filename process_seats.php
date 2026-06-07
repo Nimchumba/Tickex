@@ -12,18 +12,22 @@ if(isset($_POST['confirm_seats'])) {
     $quantity = (int)$_POST['quantity'];
     $selected_seats = json_decode($_POST['selected_seats'], true);
     
-    if(empty($selected_seats)) {
+    if(empty($selected_seats) || count($selected_seats) !== $quantity) {
         header("Location: seat_selection.php?event_id=$event_id&type=$ticket_type&qty=$quantity&error=1");
         exit();
     }
     
     // Reserve selected seats
     foreach($selected_seats as $seat) {
-        mysqli_query($conn, "UPDATE seats SET status = 'reserved', booked_at = NOW() WHERE id = " . $seat['id']);
+        $seat_id = (int)$seat['id'];
+        mysqli_query($conn, "UPDATE seats SET status = 'reserved', booked_at = NOW() WHERE id = $seat_id");
     }
     
-    // Store seat info in session
+    // Store seat info in session for checkout
     $_SESSION['selected_seats'] = $selected_seats;
+    $_SESSION['selected_seats_quantity'] = $quantity;
+    $_SESSION['selected_seats_event_id'] = $event_id;
+    $_SESSION['selected_seats_ticket_type'] = $ticket_type;
     
     // Redirect to payment
     header("Location: otp_payment.php?event_id=$event_id&type=$ticket_type&qty=$quantity");

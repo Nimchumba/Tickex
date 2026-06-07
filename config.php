@@ -15,4 +15,7 @@ if (!$conn) {
 
 // Start session for login system
 session_start();
+
+// Google sign-in client ID (replace with your Google OAuth client ID)
+define('GOOGLE_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID');
 ?>

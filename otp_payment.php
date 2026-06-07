@@ -37,6 +37,26 @@ if($ticket_type == 'VIP') {
 }
 $total = $final_price * $quantity;
 
+$selected_seats = $_SESSION['selected_seats'] ?? [];
+$selected_seat_count = count($selected_seats);
+if(empty($selected_seats) || $event_id == 0) {
+    header("Location: seat_selection.php?event_id=$event_id&type=$ticket_type&qty=$quantity");
+    exit();
+}
+
+$seat_total = 0;
+$seat_labels = [];
+foreach($selected_seats as $seat) {
+    $seat_total += floatval($seat['price']);
+    $seat_labels[] = $seat['row'] . $seat['number'];
+}
+
+if($selected_seat_count !== $quantity) {
+    $quantity = $selected_seat_count;
+}
+
+$total = $seat_total;
+
 // Handle Send OTP
 if(isset($_POST['send_otp'])) {
     $phone = $_POST['phone'];
@@ -91,9 +111,17 @@ if(isset($_POST['verify_otp'])) {
         
         if($insert) {
             $ticket_id = mysqli_insert_id($conn);
+            foreach($selected_seats as $seat) {
+                $seat_id = (int)$seat['id'];
+                mysqli_query($conn, "UPDATE seats SET status = 'booked', booked_at = NOW() WHERE id = $seat_id");
+            }
             unset($_SESSION['otp']);
             unset($_SESSION['otp_time']);
             unset($_SESSION['otp_phone']);
+            unset($_SESSION['selected_seats']);
+            unset($_SESSION['selected_seats_quantity']);
+            unset($_SESSION['selected_seats_event_id']);
+            unset($_SESSION['selected_seats_ticket_type']);
             
             header("Location: payment_success.php?ticket_id=$ticket_id");
             exit();
@@ -241,6 +269,7 @@ if(isset($_POST['resend_otp'])) {
                 <p>📅 <?php echo date('d M Y', strtotime($event['event_date'])); ?></p>
                 <p>📍 <?php echo $event['location']; ?></p>
                 <p>🎫 <?php echo $ticket_type; ?> × <?php echo $quantity; ?></p>
+                <p>💺 Seats: <?php echo implode(', ', $seat_labels); ?></p>
             </div>
             
             <div class="amount">KES <?php echo number_format($total); ?></div>
@@ -276,7 +305,7 @@ if(isset($_POST['resend_otp'])) {
                 </form>
             <?php endif; ?>
             
-            <a href="event.php?id=<?php echo $event_id; ?>" class="back-link">← Back to Event</a>
+            <a href="seat_selection.php?event_id=<?php echo $event_id; ?>&type=<?php echo urlencode($ticket_type); ?>&qty=<?php echo $quantity; ?>" class="back-link">← Change selected seats</a>
         </div>
     </div>
 </div>
