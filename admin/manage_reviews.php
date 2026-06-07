@@ -1,8 +1,8 @@
 <?php
 include "../config.php";
 
-// Check if user is logged in (any logged in user can manage reviews for simplicity)
-if(!isset($_SESSION['user_id'])) {
+// Check if admin is logged in
+if(!isset($_SESSION['admin_id'])) {
     header("Location: ../login.php");
     exit();
 }

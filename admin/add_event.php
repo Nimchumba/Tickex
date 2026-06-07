@@ -1,11 +1,14 @@
 <?php
 include "../config.php";
 
-// Check if user is logged in
-if(!isset($_SESSION['user_id'])) {
-    header("Location: ../login.php");
+// Check if admin is logged in
+if(!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
     exit();
 }
+
+// For event creation, admin ID is the creator
+$user_id = 1; // Use admin ID (1) for all admin-created events
 
 $success = "";
 $error = "";
@@ -22,7 +25,6 @@ if(isset($_POST['add_event'])) {
     $location = mysqli_real_escape_string($conn, $_POST['location']);
     $price = (float)$_POST['price'];
     $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $user_id = $_SESSION['user_id'];
     $allow_seat_selection = isset($_POST['allow_seat_selection']) ? (int)$_POST['allow_seat_selection'] : 1;
     $venue_layout = mysqli_real_escape_string($conn, $_POST['venue_layout'] ?? 'theater');
     

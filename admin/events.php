@@ -1,9 +1,9 @@
 <?php
 include "../config.php";
 
-// Check if user is logged in
-if(!isset($_SESSION['user_id'])) {
-    header("Location: ../login.php");
+// Check if admin is logged in
+if(!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
     exit();
 }
 
