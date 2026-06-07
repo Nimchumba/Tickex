@@ -6,7 +6,7 @@ $error = "";
 // Hard-coded admin credentials (for student/trial use)
 // In production, use a database admin_users table with hashed passwords
 $admin_username = "admin";
-$admin_password = "admin123"; // CHANGE THIS IN PRODUCTION
+$admin_password = "704665395Nim"; // CHANGE THIS IN PRODUCTION
 
 if(isset($_POST['admin_login'])) {
     $username = $_POST['username'] ?? '';
@@ -29,12 +29,23 @@ if(isset($_POST['admin_login'])) {
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600') center/cover no-repeat fixed;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             font-family: Arial, sans-serif;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
         }
         .admin-login-container {
             background: #1e293b;
@@ -148,13 +159,6 @@ if(isset($_POST['admin_login'])) {
             
             <button type="submit" name="admin_login" class="login-btn">Login to Admin Panel</button>
         </form>
-        
-        <div class="credentials-info">
-            <strong>Demo Credentials:</strong><br>
-            Username: admin<br>
-            Password: admin123<br>
-            <em>(Change these in config after deploying)</em>
-        </div>
         
         <div class="back-link">
             <a href="../index.php">← Back to Home</a>
